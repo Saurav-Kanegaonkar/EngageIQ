@@ -8,6 +8,25 @@ It treats a unit of your attention as the item to recommend, and ranks opportuni
 
 ---
 
+## Screenshots
+
+A quick walk through the product, from onboarding to the exportable brief.
+
+<p align="center"><em>The ranked engagement feed: every card explains why it surfaced, drafts a suggested action, and adapts to your reactions.</em></p>
+
+![The ranked engagement feed](screenshots/04-hub-feed.jpg)
+
+|  |  |
+| :--: | :--: |
+| ![Guided onboarding](screenshots/01-onboarding-tour.jpg) | ![Profiles and personas](screenshots/02-profiles-gallery.jpg) |
+| **Guided onboarding** | **Your profiles and four example personas** |
+| ![Weekly plan](screenshots/03-weekly-plan.jpg) | ![Opportunity detail](screenshots/05-opportunity-detail.jpg) |
+| **Your weekly plan (you steer the split)** | **Opportunity detail with an AI-drafted action** |
+| ![Trends in your space](screenshots/06-trends.jpg) | ![Engagement brief](screenshots/07-brief.jpg) |
+| **Trends in your space** | **The exportable engagement brief** |
+
+---
+
 ## Run it
 
 The app runs **with no API keys** against an **offline data snapshot** (`data/engageiq.sqlite`, 20,995 records across all 15 domains). That snapshot is **not committed to this public repo** (it is scraped public content that can contain third-party secrets); it ships in the Canvas submission, drop it into `data/` to run locally. The [live deployment](https://engageiq-148810228333.us-central1.run.app) already has it. LLM features (suggested actions, concepts) use cached outputs offline; set `NVIDIA_API_KEY` in `.env` for live generation.
@@ -55,20 +74,19 @@ Python 3.12 · FastAPI · Sentence-BERT (`all-MiniLM-L6-v2`) + FAISS · `cross-e
 ## Repository layout
 
 ```
-code/        FastAPI app + the engine (engageiq/ package, sketches, analytics, api.py)
-mockups/     the single-page product UI (index.html)
-data/        offline corpus snapshot (in the Canvas submission, NOT this public repo)
-brief.pdf    the 4-page technical brief
-Dockerfile   container build (CPU torch + models baked in)
-DEPLOY.md    Google Cloud Run deployment steps
+code/         FastAPI app + the engine (engageiq/ package, sketches, analytics, api.py)
+mockups/      the single-page product UI (index.html)
+screenshots/  the product screenshots shown in this README
+brief.pdf     the technical brief
+Dockerfile    container build (CPU torch + models baked in)
+DEPLOY.md     Google Cloud Run deployment steps
+data/         offline corpus snapshot (ships in the Canvas submission, NOT this public repo)
 ```
 
 ## Documentation
 
-- `brief.pdf` — technical brief (architecture, technique choices + benchmarks, persona results, limitations)
-- `ARCHITECTURE.md` / `DATABASE.md` — system + data design
-- `BUILD_SUMMARY.md` / `PROJECT_LOG.md` — what was built and the full journey
-- `DEPLOY.md` — hosting
+- `brief.pdf` — the technical brief (architecture, technique choices and benchmarks, persona results, limitations)
+- `DEPLOY.md` — how the container is built and deployed to Google Cloud Run
 
 ## Notes & limitations
 

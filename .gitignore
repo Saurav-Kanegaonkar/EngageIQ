@@ -61,3 +61,17 @@ archive/
 # ─────────────────────────────────────────────────────────────
 data/
 
+# ─────────────────────────────────────────────────────────────
+# Internal dev / planning docs — kept on disk for the Canvas submission, but NOT
+# published to the public repo (they read like a work-log and clutter the project page).
+# ─────────────────────────────────────────────────────────────
+ARCHITECTURE.md
+BUILD_PLAN.md
+BUILD_SUMMARY.md
+DATABASE.md
+PROJECT_LOG.md
+brief.md
+
+# local dev tooling (screenshot capture scripts, etc.)
+tools/
+

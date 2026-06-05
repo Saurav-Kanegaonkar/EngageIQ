@@ -2039,7 +2039,7 @@ function detailHTML(o, concepts, rankN){
   if(!o) return `<div class="dt-wrap"><div class="feed-loading">Could not load this opportunity.<br><br>Open it from your feed, or <a href="/" onclick="event.preventDefault();backToOnboarding()">go home</a>.</div></div>`;
   const bk = BUCKET_BY_KEY[o.bucket];
   const bchip = bk ? `<span class="bchip" style="--bkc:${bk.color}">${esc(bk.label)}</span>` : "";
-  const titleH = o.url ? `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title)}</a>` : esc(o.title);
+  const titleH = o.url ? `<a href="${esc(o.url)}" target="_blank" rel="noopener" onclick="engageFromTitle(this)">${esc(o.title)}</a>` : esc(o.title);
   const why = (o.drivers||[]).map(function(s){ const v=(o[s]!=null)?o[s]:null; return `<li><b>${esc(SIG_LABEL[s]||s)}${v!=null?" ("+band(v)+")":""}:</b> ${esc(SIG_EXPLAIN[s]||"")}</li>`; }).join("");
   const whyBlock = why ? `<div class="dt-sec"><h4>Why it's a fit for you</h4><ul class="cm-why">${why}</ul></div>` : "";
   const repoLine = (o.source==="github" && o.contribution_worth!=null)
@@ -2071,6 +2071,14 @@ function detailHTML(o, concepts, rankN){
 function _oppOid(btn){ const w=btn.closest("[data-oid]"); return w?w.dataset.oid:""; }
 function markOppEngage(btn){ const oid=_oppOid(btn); if(oid) sendFeedback(oid,"engage"); }
 function leverageOpp(btn){ const oid=_oppOid(btn); if(!oid) return; const o=ALL_ITEMS.find(x=>x.id===oid); sendFeedback(oid,"engage"); if(o&&o.url) window.open(o.url,"_blank","noopener"); btn.outerHTML=`<span class="interested">${CHECK_SVG} Interested</span>`; }
+function engageFromTitle(a){   // clicking the title marks engagement + flips the CTA to Interested (the link still opens the source in a new tab)
+  const wrap=a.closest(".dt-wrap"); if(!wrap) return;
+  const acts=wrap.querySelector(".dt-actions"); if(!acts) return;
+  const oid=acts.dataset.oid; if(!oid) return;
+  sendFeedback(oid,"engage");
+  const eng=acts.querySelector("button.engage");
+  if(eng) eng.outerHTML=`<span class="interested">${CHECK_SVG} Interested</span>`;
+}
 function dismissOpp(btn){ const oid=_oppOid(btn); if(!oid) return; sendFeedback(oid,"dismiss","not for me").then(()=>history.back()); }
 function saveOpp(btn){ const oid=_oppOid(btn); if(!oid) return; const o=ALL_ITEMS.find(x=>x.id===oid); const now=!(o&&o.state&&o.state.saved); sendFeedback(oid, now?"save":"unsave"); btn.textContent=now?"Saved":"Save for later"; }
 function closeCardModal(){ document.getElementById("cardModal").classList.remove("show"); }

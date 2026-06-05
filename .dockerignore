@@ -1,0 +1,44 @@
+# Keep the build context (and the image) lean: ship only what the app needs at runtime.
+
+# virtualenv + python caches (the .venv alone is ~GB)
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# secrets - never ship
+.env
+
+# vcs / editor / OS
+.git/
+.gitignore
+.DS_Store
+.vscode/
+.idea/
+.claude/
+
+# dev-only trees not used at runtime
+archive/
+reports/
+docs/
+
+# large RAW ingestion inputs + intermediates (the engine never reads these at runtime)
+data/reddit_snapshot.json
+data/reddit_snapshot_2.json
+data/reddit_noise.json
+data/noise_other.json
+data/raw/
+
+# read-write user-state DB: regenerates empty in the container (don't ship local accounts)
+data/engage.sqlite
+*.sqlite-journal
+
+# Firebase Hosting config (the engageiq.web.app front-door, not part of the container)
+firebase.json
+.firebaserc
+.firebase/
+public/

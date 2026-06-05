@@ -1,0 +1,127 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Trends — design options</title>
+<style>
+:root{--bg:#f4f5f7;--surface:#fff;--ink:#1a1d24;--muted:#6b7280;--faint:#9aa1ad;--line:#e7e9ee;--line2:#d8dbe2;--accent:#4f46e5;--accent2:#7c5cfc;--green:#10b981;--orange:#f97316;--purple:#8b5cf6;--shadow:0 1px 2px rgba(0,0,0,.04),0 2px 8px rgba(0,0,0,.04)}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);padding:30px 36px 80px}
+h1{font-size:21px;margin:0 0 4px}.sub{color:var(--muted);font-size:13.5px;margin:0 0 26px}
+.optlabel{display:inline-block;background:var(--ink);color:#fff;font-size:12px;font-weight:800;letter-spacing:.5px;padding:5px 12px;border-radius:8px;margin:38px 0 4px}
+.optname{font-size:17px;font-weight:800;margin:8px 0 2px}.optwhen{color:var(--muted);font-size:13px;margin:0 0 16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px 22px;margin-bottom:16px}
+.panel h4{margin:0 0 14px;font-size:12.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+/* movers */
+.mv{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.mv:last-child{border:none}.mv .nm{flex:none;width:185px;font-weight:600;font-size:14px}
+.mv .up{color:var(--green);font-weight:800;font-size:13px;flex:none;width:30px}
+.bar{flex:1;height:9px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.mv .meta{flex:none;width:130px;text-align:right;color:var(--faint);font-size:12px;font-weight:600}
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{border:1px solid var(--line2);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:600;color:var(--ink)}
+.chip.lg{font-size:16px;background:color-mix(in srgb,var(--accent) 9%,#fff);border-color:color-mix(in srgb,var(--accent) 30%,#fff);color:var(--accent)}
+.chip.md{font-size:14px}.chip.sm{font-size:12.5px;color:var(--muted)}
+/* breakout list */
+.bk{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line)}.bk:last-child{border:none}
+.src{font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;flex:none}
+.src.hn{background:#fff0e6;color:#d4621a}.src.rd{background:#ffe9e3;color:#d93900}.src.dt{background:#eee9ff;color:#5b3df0}.src.bs{background:#e6f3ff;color:#0a7}.src.gh{background:#eef0f3;color:#333}
+.bk .t{flex:1;font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bk .e{flex:none;color:var(--faint);font-size:12px;font-weight:700}
+.fire{color:var(--orange);font-weight:800}
+/* KPI */
+.kpi{display:flex;gap:14px;margin-bottom:16px}
+.k{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px}
+.k .n{font-size:26px;font-weight:800;letter-spacing:-.5px}.k .l{font-size:12px;color:var(--muted);margin-top:3px}
+/* hbar chart */
+.hb{display:flex;align-items:center;gap:10px;margin-bottom:9px}.hb .l{width:150px;font-size:13px;font-weight:600}.hb .t{flex:1;height:20px;background:var(--line);border-radius:6px;overflow:hidden}.hb .t i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}.hb .v{width:54px;text-align:right;font-size:12px;color:var(--faint);font-weight:700}
+.hb.g .t i{background:var(--green)}.hb.o .t i{background:var(--orange)}
+/* narrative */
+.narr{background:linear-gradient(100deg,color-mix(in srgb,var(--accent) 11%,#fff),#fff 70%);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:18px 20px;margin-bottom:16px;font-size:15px;line-height:1.6}
+.narr b{font-weight:800}
+.you{display:flex;align-items:center;gap:10px;padding:8px 0}.you .d{width:9px;height:9px;border-radius:50%;background:var(--accent)}.you .x{flex:1}.you .p{font-weight:800;color:var(--accent)}
+.jump{display:flex;align-items:center;gap:11px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:9px}
+.jump .arrow{margin-left:auto;color:var(--accent);font-weight:700;font-size:13px}
+</style></head><body>
+<h1>Trends view — three design directions</h1>
+<p class="sub">Same real data from our 20,995-record corpus, three ways to present it. Pick a direction (or a hybrid).</p>
+
+<!-- ============ OPTION A ============ -->
+<span class="optlabel">OPTION A</span>
+<div class="optname">Movers board</div>
+<p class="optwhen">Scannable, news-feed feel. Leads with what is moving. Best for the trend-spotter (Lina), fast to read in a demo.</p>
+<div class="panel"><h4>Rising in your space</h4>
+  <div class="mv"><span class="up">↑↑</span><span class="nm">Open Source Trending</span><span class="bar"><i style="width:100%"></i></span><span class="meta">557 · vel 0.54</span></div>
+  <div class="mv"><span class="up">↑↑</span><span class="nm">GameDev (C++)</span><span class="bar"><i style="width:87%"></i></span><span class="meta">894 · vel 0.47</span></div>
+  <div class="mv"><span class="up">↑</span><span class="nm">Frontend / Web</span><span class="bar"><i style="width:72%"></i></span><span class="meta">1,545 · vel 0.39</span></div>
+  <div class="mv"><span class="up">↑</span><span class="nm">DevOps / K8s</span><span class="bar"><i style="width:72%"></i></span><span class="meta">1,398 · vel 0.39</span></div>
+  <div class="mv"><span class="up">↑</span><span class="nm">Developer Tools</span><span class="bar"><i style="width:68%"></i></span><span class="meta">2,348 · vel 0.37</span></div>
+</div>
+<div class="row2">
+  <div class="panel"><h4>Trending topics now</h4>
+    <div class="chips"><span class="chip lg">aws</span><span class="chip lg">react</span><span class="chip md">agents</span><span class="chip md">saas</span><span class="chip md">flutter</span><span class="chip sm">rag</span><span class="chip sm">llm</span><span class="chip sm">webgpu</span></div>
+  </div>
+  <div class="panel"><h4>Breakouts right now</h4>
+    <div class="bk"><span class="src hn">HN</span><span class="t">GitHub bans security researcher who posted...</span><span class="e fire">814</span></div>
+    <div class="bk"><span class="src rd">RD</span><span class="t">Hackers Simply Asked Meta AI for Access</span><span class="e fire">1.3k</span></div>
+    <div class="bk"><span class="src dt">DT</span><span class="t">I Added a 71-Line Black Box to My Python Agent</span><span class="e">76</span></div>
+  </div>
+</div>
+
+<!-- ============ OPTION B ============ -->
+<span class="optlabel">OPTION B</span>
+<div class="optname">Analytics dashboard</div>
+<p class="optwhen">KPI cards + bar charts. Quantitative, rigorous. Best for showing the grader the "batch analytics" depth (Spark + sketch metrics).</p>
+<div class="kpi">
+  <div class="k"><div class="n">20,995</div><div class="l">opportunities analyzed</div></div>
+  <div class="k"><div class="n">15</div><div class="l">technical domains</div></div>
+  <div class="k"><div class="n">1,909</div><div class="l">distinct authors (ML)</div></div>
+  <div class="k"><div class="n">5</div><div class="l">platforms</div></div>
+</div>
+<div class="row2">
+  <div class="panel"><h4>Opportunities by domain</h4>
+    <div class="hb"><span class="l">AI Research</span><span class="t"><i style="width:100%"></i></span><span class="v">2,405</span></div>
+    <div class="hb"><span class="l">Developer Tools</span><span class="t"><i style="width:98%"></i></span><span class="v">2,348</span></div>
+    <div class="hb"><span class="l">Cybersecurity</span><span class="t"><i style="width:95%"></i></span><span class="v">2,281</span></div>
+    <div class="hb"><span class="l">B2B SaaS</span><span class="t"><i style="width:85%"></i></span><span class="v">2,042</span></div>
+    <div class="hb"><span class="l">Frontend / Web</span><span class="t"><i style="width:64%"></i></span><span class="v">1,545</span></div>
+  </div>
+  <div class="panel"><h4>Platform mix</h4>
+    <div class="hb g"><span class="l">Dev.to</span><span class="t"><i style="width:100%"></i></span><span class="v">6,607</span></div>
+    <div class="hb g"><span class="l">Bluesky</span><span class="t"><i style="width:83%"></i></span><span class="v">5,482</span></div>
+    <div class="hb g"><span class="l">Hacker News</span><span class="t"><i style="width:63%"></i></span><span class="v">4,138</span></div>
+    <div class="hb g"><span class="l">Reddit</span><span class="t"><i style="width:57%"></i></span><span class="v">3,768</span></div>
+    <div class="hb g"><span class="l">GitHub</span><span class="t"><i style="width:15%"></i></span><span class="v">1,000</span></div>
+  </div>
+</div>
+<div class="panel"><h4>Trending terms (Count-Min Sketch frequency)</h4>
+  <div class="hb o"><span class="l">aws</span><span class="t"><i style="width:100%"></i></span><span class="v">750</span></div>
+  <div class="hb o"><span class="l">react</span><span class="t"><i style="width:99%"></i></span><span class="v">742</span></div>
+  <div class="hb o"><span class="l">agent</span><span class="t"><i style="width:79%"></i></span><span class="v">590</span></div>
+  <div class="hb o"><span class="l">saas</span><span class="t"><i style="width:79%"></i></span><span class="v">590</span></div>
+  <div class="hb o"><span class="l">flutter</span><span class="t"><i style="width:69%"></i></span><span class="v">515</span></div>
+</div>
+
+<!-- ============ OPTION C ============ -->
+<span class="optlabel">OPTION C</span>
+<div class="optname">Personalized narrative + jump-in</div>
+<p class="optwhen">Story-driven, scoped to the persona, and ties trends back to action. Best fit for "for you" + connects Trends to the Opportunities feed.</p>
+<div class="narr">In your space (<b>Machine Learning, AI Research, Data Eng</b>): <b>AI Research</b> is the busiest area you follow (2,405 active), and <b>Open Source Trending</b> is heating up fastest. <b>Agents</b> and <b>RAG</b> are surging in conversation this week.</div>
+<div class="row3">
+  <div class="panel"><h4>Heating up for you</h4>
+    <div class="mv"><span class="up">↑↑</span><span class="nm" style="width:auto">AI Research</span><span class="meta" style="width:auto">2,405</span></div>
+    <div class="mv"><span class="up">↑</span><span class="nm" style="width:auto">Python / Data Eng</span><span class="meta" style="width:auto">1,933</span></div>
+    <div class="mv"><span class="up">↑</span><span class="nm" style="width:auto">Machine Learning</span><span class="meta" style="width:auto">1,512</span></div>
+  </div>
+  <div class="panel"><h4>Surging topics</h4>
+    <div class="chips"><span class="chip md">agents</span><span class="chip md">rag</span><span class="chip sm">llm</span><span class="chip sm">pytorch</span><span class="chip sm">inference</span></div>
+  </div>
+  <div class="panel"><h4>Your engagement profile</h4>
+    <div class="you"><span class="d"></span><span class="x">You engage most with</span><span class="p">rising, high-discussion</span></div>
+    <div class="you"><span class="d"></span><span class="x">Top domain</span><span class="p">AI Research</span></div>
+  </div>
+</div>
+<div class="panel"><h4>Where to jump in (trends → opportunities)</h4>
+  <div class="jump"><span class="src dt">DT</span><span>I Added a 71-Line Black Box to My Python Agent</span><span class="arrow">Leverage →</span></div>
+  <div class="jump"><span class="src hn">HN</span><span>HuggingFace launches pre-compiled ML kernels repository</span><span class="arrow">Leverage →</span></div>
+  <div class="jump"><span class="src rd">RD</span><span>Build a modern LLM from scratch, every layer explained</span><span class="arrow">Leverage →</span></div>
+</div>
+</body></html>

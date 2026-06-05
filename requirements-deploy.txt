@@ -1,0 +1,27 @@
+# EngageIQ - runtime dependencies for the Cloud Run container.
+# Pinned to the versions verified locally (Python 3.12).
+# torch is installed separately from the PyTorch CPU index in the Dockerfile
+# (the default PyPI wheel bundles CUDA and is ~5x larger), so it is NOT listed here.
+
+# web server + API
+fastapi==0.136.3
+uvicorn[standard]==0.48.0
+pydantic==2.13.4
+
+# embeddings (L5) + ANN retrieval + multi-stage ranking with a cross-encoder (L7)
+sentence-transformers==5.5.1
+transformers==5.9.0
+faiss-cpu==1.14.2
+scikit-learn==1.8.0
+scipy==1.17.1
+numpy==2.4.6
+
+# persona-highlighted topic maps + similarity heatmap (server-rendered, Agg backend)
+matplotlib==3.10.9
+pillow==12.2.0
+
+# downloadable engagement brief (HTML -> PDF). Native libs come from the Dockerfile apt step.
+weasyprint==69.0
+
+# misc
+requests==2.34.2

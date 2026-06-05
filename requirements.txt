@@ -1,0 +1,16 @@
+# ── Phase 1: ingestion & streaming ───────────────────────────────
+requests>=2.31         # HTTP for GitHub / GH Archive / HN / Bluesky / Dev.to
+praw>=7.7              # Reddit API
+mmh3>=4.0             # fast hashing for the Bloom filter (L2 dedup)
+kafka-python>=2.0     # streaming (L3); broker runs via docker-compose
+pandas>=2.0
+
+# ── Later phases (uncommented as we reach them) ──────────────────
+# sentence-transformers   # L5 embeddings (all-MiniLM-L6-v2)
+# faiss-cpu               # L5 ANN retrieval
+# torch                   # L6 DCN / L9 DQN
+# pyspark                 # L4 batch analytics
+# streamlit               # the app
+
+# PDF engagement brief (HTML->PDF). Native deps on macOS: brew install pango cairo gdk-pixbuf
+weasyprint>=69

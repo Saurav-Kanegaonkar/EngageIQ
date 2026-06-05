@@ -1,0 +1,63 @@
+# ─────────────────────────────────────────────────────────────
+# SECRETS — never commit. Real credentials live in .env (.env.example is the template).
+# ─────────────────────────────────────────────────────────────
+.env
+*.env
+!.env.example
+.streamlit/secrets.toml
+
+# logs (may contain tokens, e.g. firebase-debug.log)
+*.log
+firebase-debug*.log
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# local tooling / editor / OS
+.claude/
+.streamlit/
+.vscode/
+.idea/
+.DS_Store
+
+# Firebase hosting (route paused; unused config, no secrets)
+firebase.json
+.firebaserc
+.firebase/
+public/
+
+# instructor's course materials (not redistributed)
+BAX423_FinalProject_EngageIQ_Spring2026_v2.docx
+BAX423_Final_OnePager.pdf
+
+# dev archive (not part of the shipped app)
+archive/
+
+# models / indexes (large binaries; rebuilt from data/embeddings.npy at startup)
+*.pt
+*.faiss
+*.bin
+
+# databases / backups (anywhere) — never commit
+*.sqlite
+*.sqlite-journal
+*.sqlite.bak
+*.bak
+*.db
+
+# ─────────────────────────────────────────────────────────────
+# DATA — the entire data/ folder is EXCLUDED from this public repo. The corpus is SCRAPED
+# public content (GitHub issues, Reddit/HN/Dev.to/Bluesky posts) and can contain THIRD-PARTY
+# secrets that people leaked publicly, so it is unsafe to publish. The offline data snapshot
+# (data/engageiq.sqlite + embeddings + summaries) ships only in the private Canvas submission.
+# ─────────────────────────────────────────────────────────────
+data/
+

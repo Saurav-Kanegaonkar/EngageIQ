@@ -1,0 +1,29 @@
+======================================================================
+ADAPTIVE LEARNING EVAL  (online weight learner, 50+ feedback rounds)
+======================================================================
+persona=sofia  mode=contribute  pool=50  rounds=60  present/round=6
+Hidden user preference differs from the mode defaults (velocity/recency driven).
+
+baseline NDCG@5 (mode-default weights, no learning): 0.679
+  round  1: NDCG@5 0.995  #######################################
+  round 10: NDCG@5 0.958  ######################################
+  round 20: NDCG@5 0.974  ######################################
+  round 30: NDCG@5 0.974  ######################################
+  round 40: NDCG@5 0.974  ######################################
+  round 50: NDCG@5 0.958  ######################################
+  round 60: NDCG@5 0.960  ######################################
+final NDCG@5 (learned weights):                       0.960   (+0.281 vs baseline)
+
+weight convergence (did the learner discover the hidden preference?):
+  signal              default  learned     true
+  velocity               0.00     0.14     0.30
+  recency                0.00     0.14     0.25
+  standout               0.10     0.07     0.20
+  relevance              0.35     0.06     0.15
+  community_health       0.15     0.12     0.10
+  visibility             0.10     0.12     0.00
+  discussion             0.00     0.09     0.00
+  platform_fit           0.22     0.11     0.00
+  effort_fit             0.08     0.15     0.00
+
+After 360 reactions: you respond more to fresh, rising fast; less to matches your interests, on your primary platform.

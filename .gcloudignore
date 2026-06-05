@@ -1,0 +1,41 @@
+# Files NOT uploaded to Cloud Build when running `gcloud run deploy --source .`
+# (mirrors .dockerignore so the upload stays small and never includes secrets).
+
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# secrets - never upload
+.env
+
+.git/
+.DS_Store
+.vscode/
+.idea/
+.claude/
+
+archive/
+reports/
+docs/
+
+# large RAW ingestion inputs + intermediates (not used at runtime)
+data/reddit_snapshot.json
+data/reddit_snapshot_2.json
+data/reddit_noise.json
+data/noise_other.json
+data/raw/
+
+# read-write user-state DB (regenerates empty in the container)
+data/engage.sqlite
+*.sqlite-journal
+
+# Firebase Hosting config (the engageiq.web.app front-door, not part of the container)
+firebase.json
+.firebaserc
+.firebase/
+public/

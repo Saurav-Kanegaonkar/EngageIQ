@@ -1,0 +1,93 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Trends integration — options</title>
+<style>
+:root{--bg:#f4f5f7;--surface:#fff;--ink:#1a1d24;--muted:#6b7280;--faint:#9aa1ad;--line:#e7e9ee;--line2:#d8dbe2;--accent:#4f46e5;--green:#10b981;--orange:#f97316;--shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);padding:30px 40px 90px}
+h1{font-size:21px;margin:0 0 4px}.sub{color:var(--muted);font-size:13.5px;margin:0 0 10px}
+.optlabel{display:inline-block;background:var(--ink);color:#fff;font-size:12px;font-weight:800;letter-spacing:.5px;padding:5px 12px;border-radius:8px;margin:40px 0 6px}
+.optname{font-size:17px;font-weight:800;margin:4px 0 2px}.when{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:760px}
+/* app frame */
+.frame{background:var(--surface);border:1px solid var(--line2);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.tb{display:flex;align-items:center;gap:14px;padding:11px 16px;border-bottom:1px solid var(--line);background:#fbfbfc}
+.dot{width:9px;height:9px;border-radius:50%;background:#e0e2e8}.dots{display:flex;gap:5px;margin-right:6px}
+.logo{font-weight:800;font-size:13px;color:var(--accent)}
+.tabs{display:flex;gap:4px;margin-left:auto}
+.tab{font-size:12.5px;font-weight:600;color:var(--muted);padding:6px 12px;border-radius:8px}.tab.on{background:var(--accent);color:#fff}
+.body{padding:16px;display:flex;gap:14px}
+.col{display:flex;flex-direction:column;gap:9px}
+.fcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff}
+.fcard .l{height:8px;background:var(--line);border-radius:4px;margin:5px 0}.fcard .l.s{width:55%}.fcard .t{height:11px;width:75%;background:#d9dbe2;border-radius:4px;margin-bottom:7px}
+.chip{display:inline-block;font-size:10px;font-weight:700;color:var(--accent);background:#eef0ff;border-radius:5px;padding:2px 7px;margin-right:4px}
+.panelbox{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff}
+.h{font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin:0 0 9px}
+.bar{height:14px;border-radius:4px;background:linear-gradient(90deg,var(--accent),#7c5cfc);margin-bottom:7px}
+.gimg{width:100%;border-radius:8px;border:1px solid var(--line);display:block}
+.note{font-size:12px;color:var(--accent);font-weight:600;margin-top:8px}
+.arrow{display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--accent);padding:0 6px}
+</style></head><body>
+<h1>How Trends integrates with the dashboard — four layouts</h1>
+<p class="sub">Grounded in the research: tabs = distinct pages · side-panel = always-visible · overview→drill = progressive disclosure. Real graphs shown in context.</p>
+
+<!-- OPTION 1: TABS -->
+<span class="optlabel">OPTION 1</span><div class="optname">Top tabs (separate pages)</div>
+<p class="when">One persona space, switch pages: Opportunities / Trends / Activity. Each gets full real estate. Cleanest separation; you see one at a time. (Pattern: top-level tabs.)</p>
+<div style="display:flex;gap:16px;align-items:flex-start">
+  <div class="frame" style="flex:1">
+    <div class="tb"><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><span class="logo">EngageIQ · Sofia</span>
+      <div class="tabs"><span class="tab on">Opportunities</span><span class="tab">Trends</span><span class="tab">Activity</span></div></div>
+    <div class="body"><div class="col" style="flex:2">
+      <div class="fcard"><div class="t"></div><div class="l"></div><div class="l s"></div></div>
+      <div class="fcard"><div class="t"></div><div class="l"></div><div class="l s"></div></div>
+      <div class="fcard"><div class="t"></div><div class="l"></div></div></div>
+      <div class="col" style="flex:1"><div class="panelbox"><div class="h">This week's mix</div><div class="bar" style="width:90%"></div><div class="bar" style="width:60%"></div></div></div></div>
+  </div>
+  <div class="frame" style="flex:1">
+    <div class="tb"><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><span class="logo">EngageIQ · Sofia</span>
+      <div class="tabs"><span class="tab">Opportunities</span><span class="tab on">Trends</span><span class="tab">Activity</span></div></div>
+    <div class="body" style="flex-direction:column"><img class="gimg" src="/trends_img/topicmap.png">
+      <div style="display:flex;gap:10px"><div class="panelbox" style="flex:1"><div class="h">Trending terms (CMS)</div><div class="bar" style="width:100%"></div><div class="bar" style="width:80%"></div><div class="bar" style="width:60%"></div></div><div class="panelbox" style="flex:1"><div class="h">Your engagement</div><div class="bar" style="width:70%"></div><div class="bar" style="width:50%"></div></div></div></div>
+  </div>
+</div>
+
+<!-- OPTION 2: INSIGHTS RAIL -->
+<span class="optlabel">OPTION 2</span><div class="optname">Insights side-rail (always visible)</div>
+<p class="when">Keep the feed; upgrade the right rail into a live Trends panel (mini topic map + movers + engagement). Feed and trends are visible together; a "See full trends" expands the analytics. (Pattern: sidebar of key metrics.)</p>
+<div class="frame">
+  <div class="tb"><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><span class="logo">EngageIQ · Sofia</span><div class="tabs"><span class="tab on">For you</span><span class="tab">Saved</span></div></div>
+  <div class="body"><div class="col" style="flex:1.7">
+    <div class="fcard"><div class="t"></div><div class="l"></div><div class="l s"></div></div>
+    <div class="fcard"><div class="t"></div><div class="l"></div><div class="l s"></div></div>
+    <div class="fcard"><div class="t"></div><div class="l"></div><div class="l s"></div></div></div>
+    <div class="col" style="flex:1">
+      <div class="panelbox"><div class="h">Your topic map</div><img class="gimg" src="/trends_img/topicmap.png" style="height:130px;object-fit:cover"><div class="note">See full trends →</div></div>
+      <div class="panelbox"><div class="h">Rising in your space</div><div class="bar" style="width:95%"></div><div class="bar" style="width:75%"></div><div class="bar" style="width:55%"></div></div>
+    </div></div>
+</div>
+
+<!-- OPTION 3: OVERVIEW FIRST -->
+<span class="optlabel">OPTION 3</span><div class="optname">Trends overview → drill into opportunities</div>
+<p class="when">Land on the Trends overview (the landscape + key metrics), then click a cluster / domain / topic to drill into the filtered Opportunities feed. Best "trend-spotter" story: see the map, then dive in. (Pattern: overview → drill-down.)</p>
+<div style="display:flex;gap:6px;align-items:stretch">
+  <div class="frame" style="flex:1.4">
+    <div class="tb"><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><span class="logo">EngageIQ · Sofia</span><div class="tabs"><span class="tab on">Trends</span><span class="tab">Opportunities</span></div></div>
+    <div class="body" style="flex-direction:column"><img class="gimg" src="/trends_img/topicmap.png">
+      <div style="display:flex;gap:8px"><span class="chip">AI Research ↑</span><span class="chip">agents</span><span class="chip">rag</span><span class="chip">2,405 active</span></div></div>
+  </div>
+  <div class="arrow">→</div>
+  <div class="frame" style="flex:1">
+    <div class="tb"><span class="logo" style="color:var(--ink)">Opportunities in <b>AI Research</b></span></div>
+    <div class="body" style="flex-direction:column"><div class="fcard"><div class="t"></div><div class="l"></div><div class="l s"></div></div><div class="fcard"><div class="t"></div><div class="l"></div></div><div class="fcard"><div class="t"></div><div class="l"></div></div></div>
+  </div>
+</div>
+
+<!-- OPTION 4: UNIFIED SCROLL -->
+<span class="optlabel">OPTION 4</span><div class="optname">Unified scroll (collapsible analytics)</div>
+<p class="when">Everything on one page: the feed, then an expandable "Trends & analytics" block (topic map + similarity + charts) on the same scroll. Nothing to navigate to, but it is a long page. (Pattern: progressive disclosure.)</p>
+<div class="frame">
+  <div class="tb"><span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span><span class="logo">EngageIQ · Sofia</span></div>
+  <div class="body" style="flex-direction:column">
+    <div style="display:flex;gap:9px"><div class="fcard" style="flex:1"><div class="t"></div><div class="l"></div></div><div class="fcard" style="flex:1"><div class="t"></div><div class="l"></div></div></div>
+    <div class="panelbox" style="margin-top:6px"><div class="h">▾ Trends &amp; analytics in your space</div>
+      <div style="display:flex;gap:10px"><img class="gimg" src="/trends_img/topicmap.png" style="flex:1.3"><img class="gimg" src="/trends_img/domsim.png" style="flex:1"></div></div>
+  </div>
+</div>
+</body></html>

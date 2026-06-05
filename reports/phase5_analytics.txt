@@ -1,0 +1,36 @@
+EngageIQ — Capability 5: Batch Analytics & Trend Detection
+================================================================
+generated: 2026-06-04T10:29:03
+corpus: 20995 opportunities across 15 domains, 22 weeks (2025-12-31 -> 2026-06-02)
+batch pass: 8.2s (pandas, full snapshot)
+
+L2 Count-Min Sketch — trending-term frequency in fixed memory
+----------------------------------------------------------------
+  stream length             127,597 term occurrences
+  distinct terms             16,978
+  sketch size          5437 x 5 = 27,185 counters
+  mean abs error               2.68 (on true top-25 terms)
+  max relative error          1.16%
+  memory  sketch             212.4 KB
+  memory  exact dict        2072.8 KB  (9.8x smaller with the sketch)
+
+L2 HyperLogLog — distinct authors (reach) in ~16 KB
+----------------------------------------------------------------
+  true distinct              12,925
+  HLL estimate               12,980
+  relative error              0.43%  (theory: 1.04/sqrt(m) = 0.81%)
+  registers (m)              16,384
+  memory  HLL                 16.0 KB
+  memory  exact set          777.5 KB  (48.6x smaller with the sketch)
+
+Why this matters: both sketches MERGE without rescanning the corpus, so the
+dashboard rolls a persona's domains up on the fly — HLL registers by max
+(distinct reach), and per-domain term counts by sum (trending in your space).
+
+Aggregate insights computed (per domain, scoped to each persona):
+  - category distribution (volume per domain + per source)
+  - trending topics (CMS-estimated term frequencies)
+  - most active communities (engagement-ranked + distinct authors)
+  - engagement volume over time + week-over-week deltas
+  - rising domains (recent 3-week mass vs trailing baseline)
+  - domain interrelation (cosine similarity of MiniLM centroids) + t-SNE topic map

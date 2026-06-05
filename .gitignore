@@ -75,3 +75,9 @@ brief.md
 # local dev tooling (screenshot capture scripts, etc.)
 tools/
 
+# generated artifacts — the CODE that produces these stays in the repo (code/analytics.py,
+# sketches.py, adaptive_eval.py, render_trends.py); the regenerable eval outputs, rendered
+# plots, and generated HTML do not need to clutter the public project page.
+reports/
+docs/
+

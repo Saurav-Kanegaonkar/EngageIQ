@@ -172,13 +172,23 @@ def _domains_phrase(persona: dict, dom_label) -> str:
 
 
 def deterministic_read(persona: dict, dom_label) -> str:
+    """Offline fallback: a synthesis from the structured profile (focus areas, style,
+    hours, experience). It does NOT echo the goal verbatim. The LLM read captures the
+    free-text nuance when a key is available."""
     exp = experience(persona)
     mode = score.mode_for_persona(persona)
-    goal = (persona.get("goal") or "").strip().rstrip(".")
     verb = _MODE_VERB.get(mode, "engage where it counts")
-    return (f"We read your goal as: {goal}. {_EXP_CLAUSE.get(exp, '')}"
-            f"You focus on {_domains_phrase(persona, dom_label)}, and you like to {verb}. "
-            f"Here is a weekly mix we would suggest. Move any slider, or set one to zero to drop it.")
+    doms = _domains_phrase(persona, dom_label)
+    try:
+        hrs = int(round(float(persona.get("time_budget_hours") or persona.get("hours") or 5)))
+    except (TypeError, ValueError):
+        hrs = 5
+    avoid = (persona.get("avoid") or "").strip().rstrip(".")
+    s = f"You want to {verb}, focused on {doms}. {_EXP_CLAUSE.get(exp, '')}"
+    s += f"With about {hrs} hours a week, here is a mix that puts your time where it counts"
+    s += f", and steers clear of {avoid}." if avoid else "."
+    s += " Move any slider, or set one to zero to drop it."
+    return s
 
 
 def _cache_key(persona: dict) -> str:
@@ -202,22 +212,32 @@ def _llm_read(persona: dict, dom_label) -> str | None:
     if not llm.available():
         return None
     mode = score.mode_for_persona(persona)
+    try:
+        hrs = int(round(float(persona.get("time_budget_hours") or persona.get("hours") or 5)))
+    except (TypeError, ValueError):
+        hrs = 5
+    avoid = (persona.get("avoid") or "").strip()
     prompt = (
         "A developer is setting up a weekly plan for where to spend their engagement time. "
-        "In 2 to 3 warm, plain sentences, reflect back what they want and what we will emphasise "
-        "(contributing, learning, discussion, or staying current). Address them as 'you'. "
-        "No markdown, no preamble, no dashes.\n\n"
-        f"Goal: {persona.get('goal','')}\n"
-        f"Experience read: {experience(persona)}\n"
+        "Write exactly 2 concise, warm sentences (about 45 to 55 words total, no repetition) that "
+        "PARAPHRASE what they want (do not repeat their wording back to them): sentence one draws a "
+        "clear through-line connecting their focus areas into one ambition, sentence two says what we "
+        "will emphasise (contributing, learning, discussion, or staying current) within their weekly "
+        "hours. Address them as 'you'. No markdown, no preamble, no dashes, no quotes.\n\n"
+        f"Their goal, in their words: {persona.get('goal','')}\n"
         f"Focus areas: {_domains_phrase(persona, dom_label)}\n"
         f"Primary engagement style: {mode}\n"
-        f"About them: {persona.get('skills','') or persona.get('goal','')}")
+        f"Experience read: {experience(persona)}\n"
+        f"Weekly time budget: about {hrs} hours\n"
+        + (f"Wants to avoid: {avoid}\n" if avoid else ""))
     out = llm.chat(
-        [{"role": "system", "content": "You write short, encouraging plans for a busy developer."},
+        [{"role": "system", "content": "You write short, encouraging weekly plans for a busy developer. You paraphrase their intent and never echo their words back."},
          {"role": "user", "content": prompt}],
-        model=llm.FAST_MODEL, max_tokens=150, temperature=0.4)
+        model=llm.FAST_MODEL, max_tokens=170, temperature=0.4, timeout=7)
     if out:
-        out = " ".join(out.split()).replace(" — ", ", ").replace("—", ", ").replace("–", "-")
+        out = " ".join(out.split()).replace(" — ", ", ").replace("—", ", ").replace("–", "-").strip().strip('"').strip()
+        if "slider" not in out.lower():
+            out += " Move any slider, or set one to zero to drop it."
     return out or None
 
 

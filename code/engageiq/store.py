@@ -94,24 +94,28 @@ class EngageStore:
     def find_or_create_user(self, name: str) -> dict:
         """Find the account for this name (case-insensitive) or create one. Returns
         {user_id, name, is_new}. Identity only, not authentication: a name maps to an
-        account so a person's profiles + learning persist server-side and reload by name."""
+        account so a person's profiles + learning persist server-side and reload by name.
+        Matching is case-insensitive (Saurav == saurav == SAURAV) and the display name is
+        normalized to title case so the same person always renders the same way."""
         name = " ".join((name or "").split())[:60] or "Guest"
+        disp = " ".join(w[:1].upper() + w[1:].lower() for w in name.split()) or "Guest"
         now = time.time()
         with self._lock:
             row = self.conn.execute(
                 "SELECT user_id, name FROM users WHERE name IS NOT NULL AND "
-                "lower(name)=lower(?) ORDER BY created_at LIMIT 1", (name,)).fetchone()
+                "lower(name)=lower(?) ORDER BY created_at LIMIT 1", (disp,)).fetchone()
             if row:
-                self.conn.execute("UPDATE users SET last_seen_at=? WHERE user_id=?", (now, row["user_id"]))
+                # normalize any legacy/mixed-case stored name to the title-case display
+                self.conn.execute("UPDATE users SET last_seen_at=?, name=? WHERE user_id=?", (now, disp, row["user_id"]))
                 self.conn.commit()
-                return {"user_id": row["user_id"], "name": row["name"], "is_new": False}
-            slug = (re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")[:20]) or "user"
-            uid = "u_" + slug + "_" + hashlib.sha1(f"{name}{now}".encode()).hexdigest()[:6]
+                return {"user_id": row["user_id"], "name": disp, "is_new": False}
+            slug = (re.sub(r"[^a-z0-9]+", "-", disp.lower()).strip("-")[:20]) or "user"
+            uid = "u_" + slug + "_" + hashlib.sha1(f"{disp.lower()}{now}".encode()).hexdigest()[:6]
             self.conn.execute(
                 "INSERT INTO users(user_id, name, created_at, last_seen_at) VALUES(?,?,?,?)",
-                (uid, name, now, now))
+                (uid, disp, now, now))
             self.conn.commit()
-            return {"user_id": uid, "name": name, "is_new": True}
+            return {"user_id": uid, "name": disp, "is_new": True}
 
     # ── DB-backed profile gallery (per account) ───────────────────────────
     def list_profiles(self, user_id: str) -> list[dict]:

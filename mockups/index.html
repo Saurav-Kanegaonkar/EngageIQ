@@ -145,6 +145,7 @@
   .mc-mode span{color:var(--muted);font-size:13.5px}
   .mc-learn{margin-top:8px;padding-top:9px;border-top:1px solid color-mix(in srgb,var(--accent) 18%, var(--line));font-size:13px;line-height:1.5;color:var(--ink);display:flex;align-items:center;gap:12px}
   .mc-learn .mc-summary{flex:1}
+  .mc-summary .lp{color:var(--primary)} .mc-summary .lnp{color:var(--muted)}
   .mc-learn b{font-weight:700}
 
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
@@ -1729,7 +1730,7 @@ function cardHTML(o, mode, rankN){
       <button class="rchip" data-r="not relevant" onclick="dislikeReason(this)">Not relevant</button>
       <button class="rchip" data-r="too advanced" onclick="dislikeReason(this)">Too advanced</button>
       <button class="rchip" data-r="wrong platform" onclick="dislikeReason(this)">Wrong platform</button>
-      <button class="rchip" data-r="obscure/low-quality repo" onclick="dislikeReason(this)">Obscure repo</button>
+      ${o.source==="github" ? `<button class="rchip" data-r="obscure/low-quality repo" onclick="dislikeReason(this)">Obscure repo</button>` : `<button class="rchip" data-r="low quality" onclick="dislikeReason(this)">Low quality</button>`}
     </div>`;
   }
   return `<article class="oc compact${dismissed?" dismissed":""}" data-src="${esc(o.source)}" data-oid="${esc(o.id)}" data-rank="${rankN}" onclick="openCardDetail(this,event)" style="animation-delay:${(rankN%PER_PAGE)*40}ms">
@@ -1983,7 +1984,8 @@ function showLearn(summary, kind){   // fills the learning line INSIDE the merge
     return;
   }
   const lead = (kind==="notice") ? "" : `<b>Your feed is tuned to you.</b> `;
-  lb.innerHTML = `<span class="mc-summary">${lead}${esc(summary)}</span><button class="cta-sm" onclick="reRank()">Re-rank now</button>`;
+  const styled = esc(summary).replace("Non-priority:", `<b class="lnp">Non-priority:</b>`).replace("Priority:", `<b class="lp">Priority:</b>`);
+  lb.innerHTML = `<span class="mc-summary">${lead}${styled}</span><button class="cta-sm" onclick="reRank()">Re-rank now</button>`;
 }
 function closeLearn(){ showLearn(null); }   // never hide: fall back to the learning hint
 
@@ -2597,7 +2599,7 @@ function openMindMap(){
   mmSimulate(g.nodes, g.edges, W, H, 200);
   const ov=document.createElement("div"); ov.className="mm-overlay"; ov.id="mm_overlay";
   ov.innerHTML=`<div class="mm-modal"><button class="mm-close" onclick="closeMindMap()" title="Close">&times;</button>`+
-    `<div class="mm-head"><h3>Your topic map</h3><p>Each node is one of your domains, sized by how many opportunities it holds. <b>Click any domain</b> (yours or an adjacent one) to highlight it and fan out the topics people are actually discussing there. Lines connect domains related by embedding similarity. Drag to rearrange, double-click one of your domains to open its feed.</p></div>`+
+    `<div class="mm-head"><h3>Your topic map</h3><p>Each node is one of your domains, sized by how many opportunities it holds. <b>Click any domain</b> (yours or an adjacent one) to highlight it and fan out the topics people are actually discussing there. Lines connect domains related by embedding similarity. Drag to rearrange.</p></div>`+
     `<div class="mm-stage"><svg id="mm_svg" viewBox="0 0 ${W} ${H}"></svg><div class="mm-tip" id="mm_tip" style="display:none"></div></div>`+
     `<div class="mm-legend"><span><i class="dom"></i>Your domain</span><span><i class="adj"></i>Adjacent domain</span><span><i class="term"></i>Topic</span><span class="mm-hintline">Tip: click a domain to expand its topics</span></div></div>`;
   document.body.appendChild(ov);
@@ -2638,8 +2640,7 @@ function mmBuildSvg(){
     gg.addEventListener("mouseenter", ()=>mmHover(i,true));
     gg.addEventListener("mouseleave", ()=>mmHover(i,false));
     if(n.type==="domain" || n.type==="adjacent"){ gg.style.cursor="pointer";
-      gg.addEventListener("click", ()=>{ if(!MM.moved) mmToggle(n.id); });
-      if(n.type==="domain") gg.addEventListener("dblclick", ()=>{ drillDomain(n.key, n.label); closeMindMap(); }); }
+      gg.addEventListener("click", ()=>{ if(!MM.moved) mmToggle(n.id); }); }
     gN.appendChild(gg); return gg;
   });
   mmPaint();
@@ -2668,7 +2669,7 @@ function mmHover(i, on){
   if(!on){ tip.style.display="none"; return; }
   let h="";
   if(n.type==="domain"){ const ar=n.direction==="up"?"▲":n.direction==="down"?"▼":"•";
-    h=`<b>${esc(n.label)}</b><br>${n.count.toLocaleString()} opportunities · ${n.authors.toLocaleString()} contributors<br><span class="mm-mv ${n.direction}">${ar} ${n.delta>0?"+":""}${(n.delta||0).toFixed(1)}pp this week</span><br><span class="mm-tiny">click to expand topics · double-click to open feed</span>`; }
+    h=`<b>${esc(n.label)}</b><br>${n.count.toLocaleString()} opportunities · ${n.authors.toLocaleString()} contributors<br><span class="mm-mv ${n.direction}">${ar} ${n.delta>0?"+":""}${(n.delta||0).toFixed(1)}pp this week</span><br><span class="mm-tiny">click to expand topics</span>`; }
   else if(n.type==="adjacent") h=`<b>${esc(n.label)}</b><br>adjacent domain · ${Math.round((n.sim||0)*100)}% similar`;
   else if(n.type==="center") h=`<b>Your space</b><br>${(TR_DATA.scope&&TR_DATA.scope.n)||""} domains`;
   else h=`<b>${esc(n.label)}</b><br>trending topic`;

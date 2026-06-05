@@ -67,30 +67,33 @@ class Learner:
         return {"mode": self.mode, "n": self.n, "w": self.w}
 
 
-def learned_summary(learner: Learner) -> str:
-    """Plain-language read of how this user differs from the mode defaults.
+# Short, natural labels for the Priority / Non-priority line. score._LABEL phrases were
+# written for the "Why this?" context and read awkwardly after "Priority:".
+_PRIO_LABEL = {
+    "relevance": "topics that match you", "community_health": "active communities",
+    "visibility": "high-visibility posts", "velocity": "fast-rising topics",
+    "standout": "room to stand out", "recency": "fresh posts",
+    "discussion": "live discussions", "platform_fit": "your main platform",
+    "effort_fit": "quick wins", "contribution_worth": "well-run repos to contribute to"}
 
-    The signal labels are phrases (e.g. "matches your interests", "on your primary
-    platform"), so they read as list items after a colon ("leaning into: ...") rather
-    than after a preposition ("respond more to ...", which would double up as
-    "to on your primary platform"). Pluralization of "reaction" is handled too.
-    """
+
+def learned_summary(learner: Learner) -> str:
+    """A simple Priority / Non-priority read of how this user differs from the mode
+    defaults, computed live from the learned weights after each reaction."""
     base = score.MODES[learner.mode].weights
     deltas = sorted(((s, learner.w.get(s, 0.0) - base.get(s, 0.0)) for s in learner.w),
                     key=lambda x: x[1])
-    lab = score._LABEL
+    lab = _PRIO_LABEL
     up = [lab.get(s, s) for s, d in reversed(deltas) if d > 0.02][:2]
     down = [lab.get(s, s) for s, d in deltas if d < -0.02][:2]
-    n = learner.n
-    unit = "reaction" if n == 1 else "reactions"
     if not up and not down:
-        return "After " + str(n) + " " + unit + ", still learning what you respond to."
+        return "Still learning what you respond to."
     bits = []
     if up:
-        bits.append("leaning into: " + ", ".join(up))
+        bits.append("Priority: " + ", ".join(up))
     if down:
-        bits.append("easing off: " + ", ".join(down))
-    return "After " + str(n) + " " + unit + ", " + "; ".join(bits) + "."
+        bits.append("Non-priority: " + ", ".join(down))
+    return ". ".join(bits) + "."
 
 
 class Store:

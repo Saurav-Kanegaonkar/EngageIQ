@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import os
 import re
+import copy
 import json
 import html as _html
 import sqlite3
@@ -86,6 +87,20 @@ _CTX: dict[str, dict] = {}
 
 def _ctx_key(user_id: str, persona_key: str) -> str:
     return f"{user_id}|{persona_key}"
+
+
+# A fresh example persona (no per-user learning) produces a deterministic feed that is
+# identical for every visitor, so cache the engine output keyed by persona + k + split
+# and serve deep copies. This makes the 4 default personas load instantly after the
+# first visit. The cache is valid for the process lifetime (corpus + models are fixed)
+# and bounded so it cannot grow without limit.
+_DEFAULT_OUT_CACHE: dict = {}
+_DEFAULT_OUT_CAP = 64
+
+
+def _default_cache_key(persona_id, k, split):
+    sig = tuple(sorted((split or {}).items())) if split else None
+    return (persona_id, k, sig)
 
 
 def engine() -> rank.Recommender:
@@ -409,8 +424,22 @@ def recommend(req: RecRequest) -> dict:
     mode_key = score.mode_for_persona(persona)
     pkey = _persona_key(persona)
     learned = _STORE.weights(req.session_id, pkey, mode_key) if req.session_id else None
-    out = engine().recommend(persona, k=req.k, weights=learned,
-                             sources=sources, bucket_weights=bucket_weights)
+    # Fast path: a fresh example persona (no learning yet) yields a deterministic feed
+    # shared across users -> reuse a cached engine output (deep-copied so each request
+    # gets its own mutable result). Once the user has reacted, learned is set and we
+    # fall through to a live, personalized recommend.
+    if req.persona_id in personas.PERSONAS and learned is None:
+        ck = _default_cache_key(req.persona_id, req.k, req.split)
+        base = _DEFAULT_OUT_CACHE.get(ck)
+        if base is None:
+            base = engine().recommend(persona, k=req.k, weights=None,
+                                      sources=sources, bucket_weights=bucket_weights)
+            if len(_DEFAULT_OUT_CACHE) < _DEFAULT_OUT_CAP:
+                _DEFAULT_OUT_CACHE[ck] = base
+        out = copy.deepcopy(base)
+    else:
+        out = engine().recommend(persona, k=req.k, weights=learned,
+                                 sources=sources, bucket_weights=bucket_weights)
     resp = _serialize(persona, out)
     resp["persona_key"] = pkey
 

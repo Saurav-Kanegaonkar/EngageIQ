@@ -47,7 +47,7 @@ MODES: dict[str, Mode] = {
         {"github": 1.0, "devto": 0.45, "hackernews": 0.45, "reddit": 0.45, "bluesky": 0.30},
         effort_aware=True, knapsack=True,
         action="Open a PR / fix this issue",
-        blurb="Do work that builds a visible portfolio — bounded by your weekly hours."),
+        blurb="Do work that builds a visible portfolio you can point to."),
     "discuss": Mode(
         "discuss", "Discuss",
         {"relevance": 0.33, "community_health": 0.18, "discussion": 0.15,

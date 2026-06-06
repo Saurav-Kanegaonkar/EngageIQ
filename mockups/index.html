@@ -141,6 +141,8 @@
         border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:14px 18px;margin-bottom:18px}
   .modecard .mc-dot{width:11px;height:11px;border-radius:4px;background:var(--accent);flex:none;margin-top:5px}
   .modecard .mc-body{flex:1;min-width:0}
+  .mc-explored{flex:none;align-self:flex-start;font-size:12px;font-weight:700;color:var(--primary);background:var(--chip-bg);padding:4px 11px;border-radius:999px;white-space:nowrap}
+  .mc-explored:empty{display:none}
   .mc-mode b{font-size:14.5px;font-weight:700}
   .mc-mode span{color:var(--muted);font-size:13.5px}
   .mc-learn{margin-top:8px;padding-top:9px;border-top:1px solid color-mix(in srgb,var(--accent) 18%, var(--line));font-size:13px;line-height:1.5;color:var(--ink);display:flex;align-items:center;gap:12px}
@@ -1073,6 +1075,7 @@
         <div class="mc-mode"><b id="hub_modetitle"></b> <span id="hub_modeblurb"></span></div>
         <div class="mc-learn" id="hub_learning"></div>
       </div>
+      <span id="hub_explored" class="mc-explored" title="Distinct cards you have opened, leveraged, or passed on"></span>
     </div>
     <div class="filters" id="hub_filters"></div>
     <div class="domdrill" id="hub_domdrill" style="display:none"></div>
@@ -1865,6 +1868,7 @@ function renderHub(data, nameOverride){
   if(data.notice) showLearn(data.notice, "notice");
   else if(data.learned) showLearn(data.learned.summary, "learned");
   else showLearn(null);   // the learning hint (always present, this is the core mechanic)
+  setExplored(data.explored);
 
   if(PENDING_DRILL){ DOMAIN_FILTER=PENDING_DRILL; PENDING_DRILL=null; FILTER_KEY="all"; renderPage(1); }
   else renderDomDrill();
@@ -1974,6 +1978,7 @@ async function sendFeedback(oid, action, rank, reason){
       const o = ALL_ITEMS.find(x=>x.id===oid);
       if(o) o.state = {status:d.status, saved:d.saved, reason:(reason!=null?reason:((o.state&&o.state.reason)||null))};
       if(d.summary) showLearn(d.summary);
+      if(d.explored!=null) setExplored(d.explored);
     }
     return d;
   }catch(e){ return null; }
@@ -1990,6 +1995,11 @@ function showLearn(summary, kind){   // fills the learning line INSIDE the merge
   lb.innerHTML = `<span class="mc-summary">${lead}${styled}</span><button class="cta-sm" onclick="reRank()">Re-rank now</button>`;
 }
 function closeLearn(){ showLearn(null); }   // never hide: fall back to the learning hint
+function setExplored(n){   // "N cards explored" pill: distinct cards opened, leveraged, or passed on
+  const el=document.getElementById("hub_explored"); if(!el) return;
+  n=parseInt(n,10)||0;
+  el.textContent = n>0 ? (n+" card"+(n===1?"":"s")+" explored") : "";
+}
 
 /* ---------- card detail popup ---------- */
 const SIG_LABEL = {relevance:"Relevance", community_health:"Community health", standout:"Standout", velocity:"Velocity", recency:"Recency", visibility:"Visibility", discussion:"Discussion", platform_fit:"Platform fit", effort_fit:"Effort fit", contribution_worth:"Contribution-worthiness"};
@@ -2016,7 +2026,7 @@ async function openOpportunity(oid, rankN){
   switchScreen("detail"); pushURL("opportunity", oid); window.scrollTo({top:0,behavior:"smooth"});
   const mem = ALL_ITEMS.find(x=>x.id===oid) || null;
   document.getElementById("detail_body").innerHTML = detailHTML(mem, "loading", rankN||0);
-  try{ fetch("/api/event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id:SESSION,persona_key:PERSONA_KEY,type:"open_detail",opportunity_id:oid,rank:rankN||null,page:CUR_PAGE})}); }catch(e){}
+  try{ fetch("/api/event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({session_id:SESSION,persona_key:PERSONA_KEY,type:"open_detail",opportunity_id:oid,rank:rankN||null,page:CUR_PAGE})}).then(r=>r.json()).then(d=>{ if(d&&d.explored!=null) setExplored(d.explored); }).catch(()=>{}); }catch(e){}
   let data=null;
   try{ const res=await fetch("/api/opportunity",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({opportunity_id:oid})}); data=await res.json(); }catch(e){}
   if(!mem && !(data&&data.ok)){ document.getElementById("detail_body").innerHTML = detailHTML(null,null,0); return; }

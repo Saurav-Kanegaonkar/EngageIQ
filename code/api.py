@@ -488,6 +488,7 @@ def recommend(req: RecRequest) -> dict:
         lr = _STORE.learner(req.session_id, pkey, mode_key)
         if lr.n > 0:
             resp["learned"] = {"n": lr.n, "summary": feedback.learned_summary(lr), "weights": lr.w}
+        resp["explored"] = _STORE.explored_count(req.session_id, pkey)
     return resp
 
 
@@ -508,7 +509,8 @@ def feedback_endpoint(req: FeedbackRequest) -> dict:
     lr = res["learner"]
     return {"ok": True, "status": res["status"], "saved": res["saved"],
             "applied": res["applied"], "n": lr.n,
-            "summary": feedback.learned_summary(lr) if lr.n else None}
+            "summary": feedback.learned_summary(lr) if lr.n else None,
+            "explored": _STORE.explored_count(req.session_id, pkey)}
 
 
 @app.post("/api/feedback/clear-all")
@@ -530,7 +532,7 @@ def event_endpoint(req: EventRequest) -> dict:
     _STORE.log_event(req.session_id, pkey, req.type, oid=req.opportunity_id,
                      rank=req.rank, page=req.page, bucket=item.get("bucket"),
                      source=item.get("source"), mode=ctx.get("mode"))
-    return {"ok": True}
+    return {"ok": True, "explored": _STORE.explored_count(req.session_id, pkey)}
 
 
 @app.post("/api/activity")

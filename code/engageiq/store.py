@@ -261,6 +261,20 @@ class EngageStore:
         return {r["opportunity_id"]: {"status": r["status"], "saved": bool(r["saved"]),
                                       "reason": r["reason"]} for r in rows}
 
+    def explored_count(self, user_id: str, persona_key: str) -> int:
+        """Distinct opportunities the user has explored for this persona: leveraged or
+        marked not-for-me (interactions) OR opened (open_detail events), deduped by id."""
+        with self._lock:
+            row = self.conn.execute(
+                "SELECT COUNT(DISTINCT oid) AS c FROM ("
+                " SELECT opportunity_id AS oid FROM interactions"
+                "  WHERE user_id=? AND persona_key=? AND status IN ('interested','dismissed')"
+                " UNION"
+                " SELECT opportunity_id AS oid FROM events"
+                "  WHERE user_id=? AND persona_key=? AND type='open_detail')",
+                (user_id, persona_key, user_id, persona_key)).fetchone()
+        return int(row["c"]) if row and row["c"] is not None else 0
+
     # ── the core: idempotent action recording ────────────────────────────
     def record(self, user_id: str, persona_key: str, oid: str, action: str, *,
                signals: dict, mode: str, rank: int | None = None, page: int | None = None,

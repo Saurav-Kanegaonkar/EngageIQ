@@ -245,7 +245,8 @@ def persona_checks(rec: Recommender, persona: dict, k: int = 10) -> list[tuple[s
         checks.append(("dev-tools-relevant (>=6/10)", dt >= 6, f"{dt}/10 dev-tools-domain"))
         disc = sum(1 for t in types if t in ("post", "story", "comment_thread"))
         checks.append(("discussion threads not link-only (>=6/10)", disc >= 6, f"{disc}/10 discussion-type"))
-        checks.append(("not general programming", all(d & {"developer_tools", "b2b_saas", "open_source_trending", "open_source_trending"} or True for d in doms), "dev-tools mode"))
+        general = sum(1 for d in doms if d & {"beginner_coding", "frontend_web", "mobile_dev", "gamedev_cpp"})
+        checks.append(("not general programming (<=2/10)", general <= 2, f"{general}/10 general-coding"))
 
     return checks
 

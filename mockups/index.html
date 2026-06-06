@@ -141,8 +141,7 @@
         border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:14px 18px;margin-bottom:18px}
   .modecard .mc-dot{width:11px;height:11px;border-radius:4px;background:var(--accent);flex:none;margin-top:5px}
   .modecard .mc-body{flex:1;min-width:0}
-  .mc-explored{flex:none;align-self:flex-start;font-size:12px;font-weight:700;color:var(--primary);background:var(--chip-bg);padding:4px 11px;border-radius:999px;white-space:nowrap}
-  .mc-explored:empty{display:none}
+  .mc-explored{display:inline-block;font-size:11.5px;font-weight:700;color:var(--primary);background:var(--chip-bg);padding:2px 10px;border-radius:999px;margin:3px 0}
   .mc-mode b{font-size:14.5px;font-weight:700}
   .mc-mode span{color:var(--muted);font-size:13.5px}
   .mc-learn{margin-top:8px;padding-top:9px;border-top:1px solid color-mix(in srgb,var(--accent) 18%, var(--line));font-size:13px;line-height:1.5;color:var(--ink);display:flex;align-items:center;gap:12px}
@@ -1075,7 +1074,6 @@
         <div class="mc-mode"><b id="hub_modetitle"></b> <span id="hub_modeblurb"></span></div>
         <div class="mc-learn" id="hub_learning"></div>
       </div>
-      <span id="hub_explored" class="mc-explored" title="Distinct cards you have opened, leveraged, or passed on"></span>
     </div>
     <div class="filters" id="hub_filters"></div>
     <div class="domdrill" id="hub_domdrill" style="display:none"></div>
@@ -1865,6 +1863,7 @@ function renderHub(data, nameOverride){
   }
   document.getElementById("rail").innerHTML = rail;
 
+  REACTIONS = (data.learned && data.learned.n) || 0;
   if(data.notice) showLearn(data.notice, "notice");
   else if(data.learned) showLearn(data.learned.summary, "learned");
   else showLearn(null);   // the learning hint (always present, this is the core mechanic)
@@ -1977,6 +1976,7 @@ async function sendFeedback(oid, action, rank, reason){
     if(d && d.ok){
       const o = ALL_ITEMS.find(x=>x.id===oid);
       if(o) o.state = {status:d.status, saved:d.saved, reason:(reason!=null?reason:((o.state&&o.state.reason)||null))};
+      if(d.n!=null) REACTIONS=d.n;
       if(d.summary) showLearn(d.summary);
       if(d.explored!=null) setExplored(d.explored);
     }
@@ -1984,21 +1984,25 @@ async function sendFeedback(oid, action, rank, reason){
   }catch(e){ return null; }
 }
 function reRank(){ if(LAST_PAYLOAD) openHub(LAST_PAYLOAD, LAST_NAME); }
+let EXPLORED=0, REACTIONS=0, LAST_SUM=null, LAST_KIND;
 function showLearn(summary, kind){   // fills the learning line INSIDE the merged mode card
+  LAST_SUM=summary; LAST_KIND=kind;
   const lb = document.getElementById("hub_learning"); if(!lb) return;
+  // explored = opened/leveraged/passed; reactions (engage/skip) are what actually train the online learner
+  const stats = EXPLORED>0
+    ? `<br><span class="mc-explored">${EXPLORED} card${EXPLORED===1?"":"s"} explored${REACTIONS>0?` &middot; learned from ${REACTIONS} reaction${REACTIONS===1?"":"s"}`:""}</span>` : "";
   if(!summary){   // before any reactions: an inviting hint (the learning is the core mechanic)
-    lb.innerHTML = `<span class="mc-summary">EngageIQ is tuning this feed to you. React to cards (Leverage, Save, or Not for me) and it adapts, live.</span>`;
+    lb.innerHTML = `<span class="mc-summary">EngageIQ is tuning this feed to you. React to cards (Leverage, Save, or Not for me) and it adapts, live.${stats}</span>`;
     return;
   }
-  const lead = (kind==="notice") ? "" : `<b>Your feed is tuned to you.</b> `;
+  const lead = (kind==="notice") ? "" : `<b>Your feed is tuned to you.</b>`;
   const styled = esc(summary).replace("Non-priority:", `<br><b class="lnp">Non-priority:</b>`).replace("Priority:", `<br><b class="lp">Priority:</b>`);
-  lb.innerHTML = `<span class="mc-summary">${lead}${styled}</span><button class="cta-sm" onclick="reRank()">Re-rank now</button>`;
+  lb.innerHTML = `<span class="mc-summary">${lead}${stats}${styled}</span><button class="cta-sm" onclick="reRank()" title="Re-scores the whole feed with the signal weights your reactions taught the online learner">Re-rank now</button>`;
 }
 function closeLearn(){ showLearn(null); }   // never hide: fall back to the learning hint
-function setExplored(n){   // "N cards explored" pill: distinct cards opened, leveraged, or passed on
-  const el=document.getElementById("hub_explored"); if(!el) return;
-  n=parseInt(n,10)||0;
-  el.textContent = n>0 ? (n+" card"+(n===1?"":"s")+" explored") : "";
+function setExplored(n){   // distinct cards opened/leveraged/passed; rendered between the lead and Priority
+  EXPLORED=parseInt(n,10)||0;
+  showLearn(LAST_SUM, LAST_KIND);
 }
 
 /* ---------- card detail popup ---------- */
